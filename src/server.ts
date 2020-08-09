@@ -6,6 +6,8 @@ const PORT = 4000;
 const app = express();
 
 const typeDefs = gql`
+union Result = Book | Author
+
 type Book {
   title: String
   author: Author
@@ -19,6 +21,7 @@ type Author {
 type Query {
   books: [Book]
   authors: [Author]
+  search(contains: String): [Result]
 }
 
 type Mutation {
@@ -59,9 +62,31 @@ const authors = [
 ]
 
 const resolvers = {
+  Result: {
+    /**
+     * HITした結果Objectのpropertyを見て、返すtypeを定義する
+     * @param obj
+     * @param context 
+     * @param info 
+     */
+    __resolveType(obj, context, info) {
+      if(obj.name){
+        return 'Author';
+      }
+
+      if(obj.title){
+        return 'Book';
+      }
+      return null;
+    },
+  },
   Query: {
     books: () => books,
-    authors: () => authors
+    authors: () => authors,
+    search: (_, { contains }) => {
+      const foundBooks = books.filter(book => book.title.includes(contains))
+      return foundBooks.length > 0 ? foundBooks : authors.filter(author => author.name.includes(contains))
+    }
   },
   Mutation: {
     addBook: (root, { postBook: { title, author } }) => {
