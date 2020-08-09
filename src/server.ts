@@ -1,39 +1,12 @@
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
+import { bookScalar, authorScalar, resultUnion } from './schema/scalars'
+import { query } from './schema/queries'
+import { mutation } from './schema/mutations'
 
 const PORT = 4000;
 
 const app = express();
-
-const typeDefs = gql`
-union Result = Book | Author
-
-type Book {
-  title: String
-  author: Author
-}
-
-type Author {
-  name: String
-  books: [Book]
-}
-
-type Query {
-  books: [Book]
-  authors: [Author]
-  search(contains: String): [Result]
-}
-
-type Mutation {
-  addBook(postBook: PostBookInput): Book
-}
-
-input PostBookInput {
-  title: String
-  author: String
-}
-
-`;
 
 const books = [
   {
@@ -102,7 +75,10 @@ const resolvers = {
   }
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs: [bookScalar, authorScalar, resultUnion, query, mutation],
+  resolvers
+});
 server.applyMiddleware({ app });
 
 app.listen({ port: PORT }, () =>
