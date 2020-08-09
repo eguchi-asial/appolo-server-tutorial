@@ -25,3 +25,22 @@
 
 - データ更新時は共通で「MutationResponse」を実装したResponseTypeを全ての更新Mutationごとに定義すること
   - https://www.apollographql.com/docs/apollo-server/schema/schema/#structuring-mutation-responses
+
+## searchとunionについて
+
+```
+query {
+  search(contains: "Rowling") {
+    ... on Book {
+      title
+    }
+    ... on Author {
+      name
+    }
+  }
+}
+```
+
+contains引数に渡された文字列で曖昧検索を行った結果、「book」がHITすればschemaはResult Unionのresolverの中でbookスキーマとして返されるし、
+「author」がHITすればauthorスキーマで返すような仕組みになっている。
+
