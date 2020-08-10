@@ -1,6 +1,7 @@
-const { gql } = require('apollo-server-express');
+import { gql } from 'apollo-server-express';
 
 export const mutation = gql`
+
 type Mutation {
   addBook(postBook: PostBookInput): Book
 }

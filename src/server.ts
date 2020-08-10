@@ -1,8 +1,6 @@
-const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
-import { bookScalar, authorScalar, resultUnion } from './schema/scalars'
-import { query } from './schema/queries'
-import { mutation } from './schema/mutations'
+import * as express from 'express';
+import { ApolloServer } from 'apollo-server-express';
+import { schemas } from './schema';
 
 const PORT = 4000;
 
@@ -76,11 +74,11 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  typeDefs: [bookScalar, authorScalar, resultUnion, query, mutation],
+  typeDefs: schemas,
   resolvers
 });
 server.applyMiddleware({ app });
 
 app.listen({ port: PORT }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`)
 )

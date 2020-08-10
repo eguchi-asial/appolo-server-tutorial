@@ -1,4 +1,5 @@
-const { gql } = require('apollo-server-express');
+import { gql } from 'apollo-server-express';
+
 export const query = gql`
 
 type Query {
@@ -7,4 +8,5 @@ type Query {
   search(contains: String): [Result]
 }
 
-`;
+`
+;
